@@ -1,4 +1,5 @@
-import bcrypt, { hash } from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import secret from '../config/jwt';
 import express from 'express';
 const route = express.Router()
 
@@ -14,6 +15,11 @@ const CreateUser = route.post('/register', async (req, res) => {
         }
 
         const user = await User.create(req.body)
+
+        user.password = undefined
+        const token = jwt.sign({ id: user.id }, secret, {
+        expiresIn: 88000,
+        } )
 
         return res.send({user})
     }catch(err) {
